@@ -39,7 +39,7 @@ module.exports.createVideo = async (config) => {
 }
 
 const combinePresentationWithWebcams = async (presentation, webcams, config) => {
-    const video = config.workdir + '/video.mp4'
+    const video = config.workdir + '/video.webm'
 
     if (!presentation && !webcams)
         throw new Error('The presentation does not contain any renderable inputs (slides, deskshares or webcams/audio)')
@@ -63,18 +63,18 @@ const copyWebcamsVideo = async (input, output) => {
 }
 
 const copyWebcamsAudioToPresentation = async (presentation, webcams, output) => {
-    childProcess.execSync(`ffmpeg -hide_banner -loglevel error -threads 1 -i ${presentation.video} -i ${webcams.video} -c:v copy -c:a aac -map 0:0 -map 1:1 -shortest -y ${output}`)
+    childProcess.execSync(`ffmpeg -hide_banner -loglevel error -threads 1 -i ${presentation.video} -i ${webcams.video} -c:v copy -c:a libopus -map 0:0 -map 1:1 -shortest -y ${output}`)
 }
 
 const stackWebcamsToPresentation = async (presentation, webcams, output) => {
         const width = presentation.width + webcams.width
         let height = Math.max(presentation.height, webcams.height)
         if (height % 2) height += 1
-        childProcess.execSync(`ffmpeg -hide_banner -loglevel error -threads 1 -i ${presentation.video} -i ${webcams.video} -filter_complex "[0:v]pad=width=${width}:height=${height}:color=white[p];[p][1:v]overlay=x=${presentation.width}:y=0[out]" -map [out] -map 1:1 -c:a aac -shortest -y ${output}`)
+        childProcess.execSync(`ffmpeg -hide_banner -loglevel error -threads 1 -i ${presentation.video} -i ${webcams.video} -filter_complex "[0:v]pad=width=${width}:height=${height}:color=white[p];[p][1:v]overlay=x=${presentation.width}:y=0[out]" -map [out] -map 1:1 -c:a libopus -shortest -y ${output}`)
 }
 
 const addCaptions = async (captions, videoObject) => {
-    const tmpFile = videoObject.video + '.tmp.mp4'
+    const tmpFile = videoObject.video + '.tmp.webm'
 
     let cmd = 'ffmpeg -hide_banner -loglevel error -threads 1 -i ' + videoObject.video
     captions.forEach(caption => { cmd += ' -i ' + caption.file})

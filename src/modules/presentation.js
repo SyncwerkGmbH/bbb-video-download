@@ -33,14 +33,14 @@ const onlyDeskshares = async (deskshares) => {
 const combinedSlidesAndDeskshares = async (slides, deskshares, config, duration) => {
     const width = slides.viewport.width
     const height = slides.viewport.height
-    const resizedDesksharesVideo = config.workdir + '/deskshare.mp4'
-    const presentationTmp = config.workdir + '/presentation.tmp.mp4'
-    const presentationOut = config.workdir + '/presentation.mp4'
+    const resizedDesksharesVideo = config.workdir + '/deskshare.webm'
+    const presentationTmp = config.workdir + '/presentation.tmp.webm'
+    const presentationOut = config.workdir + '/presentation.webm'
 
-    childProcess.execSync(`ffmpeg -hide_banner -loglevel error -threads 1 -i ${deskshares.video} -vf "scale=w=${width}:h=${height}:force_original_aspect_ratio=1,pad=${width}:${height}:(ow-iw)/2:(oh-ih)/2:color=white" -c:v libx264 -preset ultrafast ${resizedDesksharesVideo}`)
+    childProcess.execSync(`ffmpeg -hide_banner -loglevel error -threads 1 -i ${deskshares.video} -vf "scale=w=${width}:h=${height}:force_original_aspect_ratio=1,pad=${width}:${height}:(ow-iw)/2:(oh-ih)/2:color=white" -c:v libvpx-vp9 -b:v 1024K -minrate 512K -maxrate 1485K -crf 32 -quality good -speed 2 -g 240 -tile-columns 2 -c:a libopus -b:a 48K -f webm ${resizedDesksharesVideo}`)
     deskshares.parts.forEach((part, index) => {
         const presentationIn = (index == 0) ? slides.video : presentationOut
-        childProcess.execSync(`ffmpeg -hide_banner -loglevel error -threads 1 -i ${presentationIn} -i ${resizedDesksharesVideo} -filter_complex "[0][1]overlay=x=0:y=0:enable='between(t,${part.start},${part.end})'[out]" -map [out] -c:a copy -c:v libx264 -preset ultrafast ${presentationTmp}`)
+        childProcess.execSync(`ffmpeg -hide_banner -loglevel error -threads 1 -i ${presentationIn} -i ${resizedDesksharesVideo} -filter_complex "[0][1]overlay=x=0:y=0:enable='between(t,${part.start},${part.end})'[out]" -map [out] -c:a copy -c:v libvpx-vp9 -b:v 1024K -minrate 512K -maxrate 1485K -crf 32 -quality good -speed 2 -g 240 -tile-columns 2 -c:a libopus -b:a 48K -f webm ${presentationTmp}`)
         if (fs.existsSync(presentationOut))
             fs.unlinkSync(presentationOut)
         fs.renameSync(presentationTmp, presentationOut)

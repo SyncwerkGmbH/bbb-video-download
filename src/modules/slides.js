@@ -302,7 +302,7 @@ const moveCursor = async (page, x, y) => {
 
 const renderVideo = async (config, presentation) => {
     const slidesTxtFile = config.workdir + '/slides.txt'
-    const videoFile = config.workdir + '/slides.mp4'
+    const videoFile = config.workdir + '/slides.webm'
     const timestamps = Object.keys(presentation.frames).sort((a, b) => { return 1.0 * a - 1.0 * b })
 
     let ws = ''

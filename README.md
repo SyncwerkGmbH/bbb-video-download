@@ -106,14 +106,14 @@ sudo -u bigbluebutton docker-compose run --rm --user 998:998 app node index.js -
 Example for a published presentation with internal meeting id 9a9b6536a10b10017f7e849d30a026809852d01f-1597816023148:
 ```bash
 cd /opt/bbb-video-download
-sudo -u bigbluebutton docker-compose run --rm --user 998:998 app node index.js -i /var/bigbluebutton/published/presentation/9a9b6536a10b10017f7e849d30a026809852d01f-1597816023148 -o /var/bigbluebutton/published/presentation/9a9b6536a10b10017f7e849d30a026809852d01f-1597816023148/video.mp4
+sudo -u bigbluebutton docker-compose run --rm --user 998:998 app node index.js -i /var/bigbluebutton/published/presentation/9a9b6536a10b10017f7e849d30a026809852d01f-1597816023148 -o /var/bigbluebutton/published/presentation/9a9b6536a10b10017f7e849d30a026809852d01f-1597816023148/video.webm
 ```
 
 *Please note, that all directories you want to access as input or output must be mounted as volumes in docker-compose.yml. Out of the box only /var/bigbluebutton/published/presentation is mounted.*
 
 
-## Info for server administrators
-MPEG4 is not a free format. You may need to obtain a license to use this script on your server.
+## Update: Info for server administrators
+The upstream project uses MP4 (libx264, AAC) format. Due to licensing issues with this format, we changed the code to output the resulting video file in WebM (libvpx-vp9, libopus) format instead.
 
 ## Version history:
 - 1.0.0 initial release
